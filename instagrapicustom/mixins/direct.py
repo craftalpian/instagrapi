@@ -4,22 +4,22 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from instagrapi.exceptions import ClientNotFoundError, DirectThreadNotFound
-from instagrapi.extractors import (
+from instagrapicustom.exceptions import ClientNotFoundError, DirectThreadNotFound
+from instagrapicustom.extractors import (
     extract_direct_media,
     extract_direct_message,
     extract_direct_short_thread,
     extract_direct_thread,
     extract_user_short,
 )
-from instagrapi.types import (
+from instagrapicustom.types import (
     DirectMessage,
     DirectShortThread,
     DirectThread,
     Media,
     UserShort,
 )
-from instagrapi.utils import dumps
+from instagrapicustom.utils import dumps
 
 SELECTED_FILTERS = ("flagged", "unread")
 SEARCH_MODES = ("raven", "universal")

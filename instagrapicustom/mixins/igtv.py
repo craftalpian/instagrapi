@@ -1,16 +1,16 @@
+import contextlib
 import json
 import random
-import tempfile
 import time
 from pathlib import Path
 from typing import Dict, List
 from uuid import uuid4
 
-from instagrapi import config
-from instagrapi.exceptions import ClientError, ClipConfigureError, ClipNotUpload
-from instagrapi.extractors import extract_media_v1
-from instagrapi.types import Location, Media, Track, Usertag
-from instagrapi.utils import date_time_original
+from instagrapicustom import config
+from instagrapicustom.exceptions import ClientError, IGTVConfigureError, IGTVNotUpload
+from instagrapicustom.extractors import extract_media_v1
+from instagrapicustom.types import Location, Media, Usertag
+from instagrapicustom.utils import date_time_original
 
 try:
     from PIL import Image
@@ -18,23 +18,22 @@ except ImportError:
     raise Exception("You don't have PIL installed. Please install PIL or Pillow>=8.1.1")
 
 
-class DownloadClipMixin:
+class DownloadIGTVMixin:
     """
-    Helpers to download CLIP videos
+    Helpers to download IGTV videos
     """
 
-    def clip_download(self, media_pk: int, folder: Path = "") -> str:
+    def igtv_download(self, media_pk: int, folder: Path = "") -> str:
         """
-        Download CLIP video
+        Download IGTV video
 
         Parameters
         ----------
         media_pk: int
             PK for the album you want to download
         folder: Path, optional
-            Directory in which you want to download the album,
-            default is "" and will download the files to working
-            directory.
+            Directory in which you want to download the album, default is "" and will download the files to working
+                directory.
 
         Returns
         -------
@@ -42,20 +41,19 @@ class DownloadClipMixin:
         """
         return self.video_download(media_pk, folder)
 
-    def clip_download_by_url(
+    def igtv_download_by_url(
         self, url: str, filename: str = "", folder: Path = ""
     ) -> str:
         """
-        Download CLIP video using URL
+        Download IGTV video using URL
 
         Parameters
         ----------
         url: str
             URL to download media from
         folder: Path, optional
-            Directory in which you want to download the album,
-            default is "" and will download the files to working
-            directory.
+            Directory in which you want to download the album, default is "" and will download the files to working
+                directory.
 
         Returns
         -------
@@ -64,34 +62,35 @@ class DownloadClipMixin:
         return self.video_download_by_url(url, filename, folder)
 
 
-class UploadClipMixin:
+class UploadIGTVMixin:
     """
-    Helpers to upload CLIP videos
+    Helpers to upload IGTV videos
     """
 
-    def clip_upload(
+    def igtv_upload(
         self,
         path: Path,
+        title: str,
         caption: str,
         thumbnail: Path = None,
         usertags: List[Usertag] = [],
         location: Location = None,
         configure_timeout: int = 10,
-        feed_show: str = "1",
         extra_data: Dict[str, str] = {},
     ) -> Media:
         """
-        Upload CLIP to Instagram
+        Upload IGTV to Instagram
 
         Parameters
         ----------
         path: Path
-            Path to CLIP file
+            Path to IGTV file
+        title: str
+            Title of the video
         caption: str
             Media caption
         thumbnail: Path, optional
-            Path to thumbnail for CLIP.
-            Default value is None, and it generates a thumbnail
+            Path to thumbnail for IGTV. Default value is None, and it generates a thumbnail
         usertags: List[Usertag], optional
             List of users to be tagged on this upload, default is empty list.
         location: Location, optional
@@ -99,8 +98,7 @@ class UploadClipMixin:
         configure_timeout: int
             Timeout between attempt to configure media (set caption, etc), default is 10
         extra_data: Dict[str, str], optional
-            Dict of extra data, if you need to add your params,
-            like {"share_to_facebook": 1}.
+            Dict of extra data, if you need to add your params, like {"share_to_facebook": 1}.
 
         Returns
         -------
@@ -117,9 +115,13 @@ class UploadClipMixin:
         upload_name = "{upload_id}_0_{rand}".format(
             upload_id=upload_id, rand=random.randint(1000000000, 9999999999)
         )
+        # by segments bb2c1d0c127384453a2122e79e4c9a85-0-6498763
+        # upload_name = "{hash}-0-{rand}".format(
+        #     hash="bb2c1d0c127384453a2122e79e4c9a85", rand=random.randint(1111111, 9999999)
+        # )
         rupload_params = {
-            "is_clips_video": "1",
-            "retry_context": '{"num_reupload":0,"num_step_auto_retry":0,"num_step_manual_retry":0}',
+            "is_igtv_video": "1",
+            "retry_context": '{"num_step_auto_retry":0,"num_reupload":0,"num_step_manual_retry":0}',
             "media_type": "2",
             "xsharing_user_ids": json.dumps([self.user_id]),
             "upload_id": upload_id,
@@ -141,44 +143,44 @@ class UploadClipMixin:
         )
         self.request_log(response)
         if response.status_code != 200:
-            raise ClipNotUpload(response=self.last_response, **self.last_json)
+            raise IGTVNotUpload(response=self.last_response, **self.last_json)
         with open(path, "rb") as fp:
-            clip_data = fp.read()
-            clip_len = str(len(clip_data))
+            igtv_data = fp.read()
+            igtv_len = str(len(igtv_data))
         headers = {
             "Offset": "0",
             "X-Entity-Name": upload_name,
-            "X-Entity-Length": clip_len,
+            "X-Entity-Length": igtv_len,
             "Content-Type": "application/octet-stream",
-            "Content-Length": clip_len,
+            "Content-Length": igtv_len,
             **headers,
         }
         response = self.private.post(
             "https://{domain}/rupload_igvideo/{name}".format(
                 domain=config.API_DOMAIN, name=upload_name
             ),
-            data=clip_data,
+            data=igtv_data,
             headers=headers,
         )
         self.request_log(response)
         if response.status_code != 200:
-            raise ClipNotUpload(response=self.last_response, **self.last_json)
+            raise IGTVNotUpload(response=self.last_response, **self.last_json)
         # CONFIGURE
-        # self.igtv_composer_session_id = self.generate_uuid()  #issue
+        self.igtv_composer_session_id = self.generate_uuid()
         for attempt in range(50):
-            self.logger.debug(f"Attempt #{attempt} to configure CLIP: {path}")
+            self.logger.debug(f"Attempt #{attempt} to configure IGTV: {path}")
             time.sleep(configure_timeout)
             try:
-                configured = self.clip_configure(
+                configured = self.igtv_configure(
                     upload_id,
                     thumbnail,
                     width,
                     height,
                     duration,
+                    title,
                     caption,
                     usertags,
                     location,
-                    feed_show,
                     extra_data=extra_data,
                 )
             except ClientError as e:
@@ -195,120 +197,23 @@ class UploadClipMixin:
                     media = self.last_json.get("media")
                     self.expose()
                     return extract_media_v1(media)
-        raise ClipConfigureError(response=self.last_response, **self.last_json)
+        raise IGTVConfigureError(response=self.last_response, **self.last_json)
 
-    def clip_upload_as_reel_with_music(
-        self,
-        path: Path,
-        caption: str,
-        track: Track,
-        extra_data: Dict[str, str] = {},
-    ) -> Media:
-
-        """
-        Upload CLIP as reel with music metadata.
-        It also add the music under the video, therefore a mute video is required.
-
-        If you just want to add music metadata to your reel,
-        just copy the extra data you find here and add it
-        to the extra_data parameter of the clip_upload function.
-
-        Parameters
-        ----------
-        path: Path
-            Path to CLIP file
-        caption: str
-            Media caption
-        track: Track
-            The music track to be added to the video reel
-            use cl.search_music(title)[0].dict()
-
-        extra_data: Dict[str, str], optional
-            Dict of extra data, if you need to add your params, like {"share_to_facebook": 1}.
-
-        Returns
-        -------
-        Media
-            A Media response from the call
-        """
-        tmpaudio = Path(tempfile.mktemp(".m4a"))
-        tmpaudio = self.track_download_by_url(track.uri, "track", tmpaudio.parent)
-        try:
-            highlight_start_time = track.highlight_start_times_in_ms[0]
-        except IndexError:
-            highlight_start_time = 0
-        try:
-            import moviepy.editor as mp
-        except ImportError:
-            raise Exception("Please install moviepy>=1.0.3 and retry")
-        # get all media to create the reel
-        video = mp.VideoFileClip(str(path))
-        audio_clip = mp.AudioFileClip(str(tmpaudio))
-        # set the start time of the audio and create the actual media
-        start = highlight_start_time / 1000
-        end = highlight_start_time / 1000 + video.duration
-        audio_clip = audio_clip.subclip(start, end)
-        video = video.set_audio(audio_clip)
-        # save the media in tmp folder
-        tmpvideo = Path(tempfile.mktemp(".mp4"))
-        video.write_videofile(str(tmpvideo))
-        # close the media
-        try:
-            video.close()
-        except AttributeError:
-            pass
-        try:
-            audio_clip.close()
-        except AttributeError:
-            pass
-        # create the extra data to upload with it
-        data = extra_data or {}
-        data["clips_audio_metadata"] = (
-            {
-                "original": {"volume_level": 0.0},
-                "song": {
-                    "volume_level": 1.0,
-                    "is_saved": "0",
-                    "artist_name": track.display_artist,
-                    "audio_asset_id": track.id,
-                    "audio_cluster_id": track.audio_cluster_id,
-                    "track_name": track.title,
-                    "is_picked_precapture": "1",
-                },
-            },
-        )
-        data["music_params"] = {
-            "audio_asset_id": track.id,
-            "audio_cluster_id": track.audio_cluster_id,
-            "audio_asset_start_time_in_ms": highlight_start_time,
-            "derived_content_start_time_in_ms": 0,
-            "overlap_duration_in_ms": 15000,
-            "product": "story_camera_clips_v2",
-            "song_name": track.title,
-            "artist_name": track.display_artist,
-            "alacorn_session_id": "null",
-        }
-        clip_upload = self.clip_upload(tmpvideo, caption, extra_data=data)
-        # remove the tmp files
-        tmpvideo.unlink()
-        tmpaudio.unlink()
-        return clip_upload
-
-    def clip_configure(
+    def igtv_configure(
         self,
         upload_id: str,
         thumbnail: Path,
         width: int,
         height: int,
         duration: int,
+        title: str,
         caption: str,
         usertags: List[Usertag] = [],
         location: Location = None,
-        feed_show: str = "1",
         extra_data: Dict[str, str] = {},
     ) -> Dict:
         """
-        Post Configure CLIP (send caption, thumbnail and more to Instagram)
+        Post Configure IGTV (send caption, thumbnail and more to Instagram)
 
         Parameters
         ----------
@@ -322,6 +227,8 @@ class UploadClipMixin:
             Height of the video in pixels
         duration: int
             Duration of the video in seconds
+        title: str
+            Title of the video
         caption: str
             Media caption
         usertags: List[Usertag], optional
@@ -341,19 +248,19 @@ class UploadClipMixin:
             {"user_id": tag.user.pk, "position": [tag.x, tag.y]} for tag in usertags
         ]
         data = {
-            # "igtv_ads_toggled_on": "0",
+            "igtv_ads_toggled_on": "0",
             "filter_type": "0",
             "timezone_offset": str(self.timezone_offset),
             "media_folder": "ScreenRecorder",
             "location": self.location_build(location),
             "source_type": "4",
-            # "title": title,
+            "title": title,
             "caption": caption,
             "usertags": json.dumps({"in": usertags}),
             "date_time_original": date_time_original(time.localtime()),
-            "clips_share_preview_to_feed": feed_show,
+            "igtv_share_preview_to_feed": "1",
             "upload_id": upload_id,
-            # "igtv_composer_session_id": self.igtv_composer_session_id,
+            "igtv_composer_session_id": self.igtv_composer_session_id,
             "device": self.device,
             "length": duration,
             "clips": [{"length": duration, "source_type": "4"}],
@@ -363,7 +270,7 @@ class UploadClipMixin:
             **extra_data,
         }
         return self.private_request(
-            "media/configure_to_clips/?video=1",
+            "media/configure_to_igtv/?video=1",
             self.with_default_data(data),
             with_signature=True,
         )
@@ -378,7 +285,7 @@ def analyze_video(path: Path, thumbnail: Path = None) -> tuple:
     path: Path
         Path to the video
     thumbnail: Path
-        Path to thumbnail for CLIP
+        Path to thumbnail for IGTV
 
     Returns
     -------
@@ -390,14 +297,16 @@ def analyze_video(path: Path, thumbnail: Path = None) -> tuple:
     except ImportError:
         raise Exception("Please install moviepy>=1.0.3 and retry")
 
-    print(f'Analyzing CLIP file "{path}"')
-    video = mp.VideoFileClip(str(path))
-    width, height = video.size
-    if not thumbnail:
-        thumbnail = f"{path}.jpg"
-        print(f'Generating thumbnail "{thumbnail}"...')
-        video.save_frame(thumbnail, t=(video.duration / 2))
-        crop_thumbnail(thumbnail)
+    print(f'Analyzing IGTV file "{path}"')
+    with contextlib.ExitStack() as stack:
+        video = mp.VideoFileClip(str(path))
+        width, height = video.size
+        if not thumbnail:
+            thumbnail = f"{path}.jpg"
+            print(f'Generating thumbnail "{thumbnail}"...')
+            video.save_frame(thumbnail, t=(video.duration / 2))
+            crop_thumbnail(thumbnail)
+        stack.enter_context(contextlib.closing(video))
     return thumbnail, width, height, video.duration
 
 

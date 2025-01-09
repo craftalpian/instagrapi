@@ -9,16 +9,16 @@ from datetime import datetime, timedelta
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-from instagrapi import Client
-from instagrapi.utils import gen_password
-from instagrapi.exceptions import (
+from instagrapicustom import Client
+from instagrapicustom.utils import gen_password
+from instagrapicustom.exceptions import (
     BadCredentials,
     DirectThreadNotFound,
     ProxyAddressIsBlocked,
     BadPassword,
 )
-from instagrapi.story import StoryBuilder
-from instagrapi.types import (
+from instagrapicustom.story import StoryBuilder
+from instagrapicustom.types import (
     Account,
     Collection,
     Comment,
@@ -39,8 +39,8 @@ from instagrapi.types import (
     UserShort,
     Usertag,
 )
-from instagrapi.utils import generate_jazoest
-from instagrapi.zones import UTC
+from instagrapicustom.utils import generate_jazoest
+from instagrapicustom.zones import UTC
 
 logger = logging.getLogger("instagrapi.tests")
 ACCOUNT_USERNAME = os.getenv("IG_USERNAME", "username")

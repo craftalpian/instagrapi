@@ -4,43 +4,43 @@ from urllib.parse import urlparse
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-from instagrapi.mixins.account import AccountMixin
-from instagrapi.mixins.album import DownloadAlbumMixin, UploadAlbumMixin
-from instagrapi.mixins.auth import LoginMixin
-from instagrapi.mixins.bloks import BloksMixin
-from instagrapi.mixins.challenge import ChallengeResolveMixin
-from instagrapi.mixins.clip import DownloadClipMixin, UploadClipMixin
-from instagrapi.mixins.collection import CollectionMixin
-from instagrapi.mixins.comment import CommentMixin
-from instagrapi.mixins.direct import DirectMixin
-from instagrapi.mixins.explore import ExploreMixin
-from instagrapi.mixins.fbsearch import FbSearchMixin
-from instagrapi.mixins.fundraiser import FundraiserMixin
-from instagrapi.mixins.hashtag import HashtagMixin
-from instagrapi.mixins.highlight import HighlightMixin
-from instagrapi.mixins.igtv import DownloadIGTVMixin, UploadIGTVMixin
-from instagrapi.mixins.insights import InsightsMixin
-from instagrapi.mixins.location import LocationMixin
-from instagrapi.mixins.media import MediaMixin
-from instagrapi.mixins.multiple_accounts import MultipleAccountsMixin
-from instagrapi.mixins.note import NoteMixin
-from instagrapi.mixins.notification import NotificationMixin
-from instagrapi.mixins.password import PasswordMixin
-from instagrapi.mixins.photo import DownloadPhotoMixin, UploadPhotoMixin
-from instagrapi.mixins.private import PrivateRequestMixin
-from instagrapi.mixins.public import (
+from instagrapicustom.mixins.account import AccountMixin
+from instagrapicustom.mixins.album import DownloadAlbumMixin, UploadAlbumMixin
+from instagrapicustom.mixins.auth import LoginMixin
+from instagrapicustom.mixins.bloks import BloksMixin
+from instagrapicustom.mixins.challenge import ChallengeResolveMixin
+from instagrapicustom.mixins.clip import DownloadClipMixin, UploadClipMixin
+from instagrapicustom.mixins.collection import CollectionMixin
+from instagrapicustom.mixins.comment import CommentMixin
+from instagrapicustom.mixins.direct import DirectMixin
+from instagrapicustom.mixins.explore import ExploreMixin
+from instagrapicustom.mixins.fbsearch import FbSearchMixin
+from instagrapicustom.mixins.fundraiser import FundraiserMixin
+from instagrapicustom.mixins.hashtag import HashtagMixin
+from instagrapicustom.mixins.highlight import HighlightMixin
+from instagrapicustom.mixins.igtv import DownloadIGTVMixin, UploadIGTVMixin
+from instagrapicustom.mixins.insights import InsightsMixin
+from instagrapicustom.mixins.location import LocationMixin
+from instagrapicustom.mixins.media import MediaMixin
+from instagrapicustom.mixins.multiple_accounts import MultipleAccountsMixin
+from instagrapicustom.mixins.note import NoteMixin
+from instagrapicustom.mixins.notification import NotificationMixin
+from instagrapicustom.mixins.password import PasswordMixin
+from instagrapicustom.mixins.photo import DownloadPhotoMixin, UploadPhotoMixin
+from instagrapicustom.mixins.private import PrivateRequestMixin
+from instagrapicustom.mixins.public import (
     ProfilePublicMixin,
     PublicRequestMixin,
     TopSearchesPublicMixin,
 )
-from instagrapi.mixins.share import ShareMixin
-from instagrapi.mixins.signup import SignUpMixin
-from instagrapi.mixins.story import StoryMixin
-from instagrapi.mixins.timeline import ReelsMixin
-from instagrapi.mixins.totp import TOTPMixin
-from instagrapi.mixins.track import TrackMixin
-from instagrapi.mixins.user import UserMixin
-from instagrapi.mixins.video import DownloadVideoMixin, UploadVideoMixin
+from instagrapicustom.mixins.share import ShareMixin
+from instagrapicustom.mixins.signup import SignUpMixin
+from instagrapicustom.mixins.story import StoryMixin
+from instagrapicustom.mixins.timeline import ReelsMixin
+from instagrapicustom.mixins.totp import TOTPMixin
+from instagrapicustom.mixins.track import TrackMixin
+from instagrapicustom.mixins.user import UserMixin
+from instagrapicustom.mixins.video import DownloadVideoMixin, UploadVideoMixin
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 

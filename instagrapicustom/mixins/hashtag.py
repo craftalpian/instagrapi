@@ -2,20 +2,20 @@ import base64
 import json
 from typing import List, Tuple
 
-from instagrapi.exceptions import (
+from instagrapicustom.exceptions import (
     ClientError,
     ClientLoginRequired,
     ClientUnauthorizedError,
     HashtagNotFound,
     WrongCursorError,
 )
-from instagrapi.extractors import (
+from instagrapicustom.extractors import (
     extract_hashtag_gql,
     extract_hashtag_v1,
     extract_media_v1,
 )
-from instagrapi.types import Hashtag, Media
-from instagrapi.utils import dumps
+from instagrapicustom.types import Hashtag, Media
+from instagrapicustom.utils import dumps
 
 
 class HashtagMixin:

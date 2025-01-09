@@ -5,11 +5,11 @@ from pathlib import Path
 from typing import Dict, List
 from urllib.parse import urlparse
 
-from instagrapi import config
-from instagrapi.exceptions import HighlightNotFound
-from instagrapi.extractors import extract_highlight_v1
-from instagrapi.types import Highlight
-from instagrapi.utils import dumps, vassert
+from instagrapicustom import config
+from instagrapicustom.exceptions import HighlightNotFound
+from instagrapicustom.extractors import extract_highlight_v1
+from instagrapicustom.types import Highlight
+from instagrapicustom.utils import dumps, vassert
 
 
 class HighlightMixin:

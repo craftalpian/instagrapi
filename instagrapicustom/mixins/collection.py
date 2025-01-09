@@ -1,8 +1,8 @@
 from typing import List, Tuple
 
-from instagrapi.exceptions import CollectionNotFound
-from instagrapi.extractors import extract_collection, extract_media_v1
-from instagrapi.types import Collection, Media
+from instagrapicustom.exceptions import CollectionNotFound
+from instagrapicustom.extractors import extract_collection, extract_media_v1
+from instagrapicustom.types import Collection, Media
 
 
 class CollectionMixin:

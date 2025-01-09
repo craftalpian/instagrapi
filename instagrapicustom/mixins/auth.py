@@ -13,8 +13,8 @@ from uuid import uuid4
 import requests
 from pydantic import ValidationError
 
-from instagrapi import config
-from instagrapi.exceptions import (
+from instagrapicustom import config
+from instagrapicustom.exceptions import (
     BadCredentials,
     ClientThrottledError,
     PleaseWaitFewMinutes,
@@ -22,7 +22,7 @@ from instagrapi.exceptions import (
     ReloginAttemptExceeded,
     TwoFactorRequired,
 )
-from instagrapi.utils import dumps, gen_token, generate_jazoest
+from instagrapicustom.utils import dumps, gen_token, generate_jazoest
 
 # from instagrapi.zones import CET
 TIMELINE_FEED_REASONS = (

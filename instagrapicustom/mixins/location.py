@@ -1,5 +1,6 @@
 import base64
 import json
+import string
 from typing import List, Tuple
 
 from instagrapicustom.exceptions import (
@@ -333,7 +334,7 @@ class LocationMixin:
         return medias, next_max_id
 
     def location_medias_v1(
-        self, location_pk: int, amount: int = 63, tab_key: str = "", next_max_id: str = ""
+        self, location_pk: int, amount: int = 63, tab_key: str = "", next_max_id: str = None
     ) -> List[Media]:
         """
         Get medias for a location by Private Mobile API
@@ -457,7 +458,7 @@ class LocationMixin:
         )
 
     def location_medias_recent_v1(
-        self, location_pk: int, amount: int = 63
+        self, location_pk: int, amount: int = 63, next_max_id: str = None
     ) -> List[Media]:
         """
         Get recent medias for a location
@@ -474,10 +475,10 @@ class LocationMixin:
         List[Media]
             List of objects of Media
         """
-        return self.location_medias_v1(location_pk, amount, tab_key="recent")
+        return self.location_medias_v1(location_pk, amount, tab_key="recent", next_max_id=next_max_id)
 
     def location_medias_recent(
-        self, location_pk: int, amount: int = 63, sleep: float = 0.5
+        self, location_pk: int, amount: int = 63, sleep: float = 0.5, next_max_id: str = None
     ) -> List[Media]:
         """
         Get recent medias for a location
@@ -505,7 +506,7 @@ class LocationMixin:
             # if not isinstance(e, ClientError):
             #     self.logger.exception(e)
             print("pake yang location_medias_recent_v1")
-            return self.location_medias_recent_v1(location_pk, amount)
+            return self.location_medias_recent_v1(location_pk, amount, next_max_id)
 
     def location_guides_v1(self, location_pk: int) -> List[Guide]:
         """

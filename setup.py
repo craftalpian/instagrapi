@@ -30,7 +30,7 @@ requirements = [
 # ]
 
 setup(
-    name="instagrapi",
+    name="instagrapicustom",
     version="2.1.3",
     author="Mark Subzeroid",
     author_email="143403577+subzeroid@users.noreply.github.com",

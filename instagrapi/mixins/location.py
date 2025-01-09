@@ -305,6 +305,7 @@ class LocationMixin:
         if max_id:
             try:
                 [m_id, page_id, nm_ids] = json.loads(base64.b64decode(max_id))
+                print("m_id, page_id, nm_ids", m_id, page_id, nm_ids)
             except Exception:
                 raise WrongCursorError()
             data["max_id"] = m_id
@@ -355,6 +356,7 @@ class LocationMixin:
             tab_key in tab_keys_v1
         ), f'You must specify one of the options for "tab_key" {tab_keys_a1}'
         medias, _ = self.location_medias_v1_chunk(location_pk, amount, tab_key)
+        print("ini underscore", _)
         if amount:
             medias = medias[:amount]
         return medias
@@ -495,12 +497,14 @@ class LocationMixin:
             List of objects of Media
         """
         try:
+            print("Pake yang atas")
             return self.location_medias_recent_a1(location_pk, amount, sleep)
         except Exception:
             # Users do not understand the output of such information and create bug reports
             # such this - https://github.com/subzeroid/instagrapi/issues/364
             # if not isinstance(e, ClientError):
             #     self.logger.exception(e)
+            print("pake yang location_medias_recent_v1")
             return self.location_medias_recent_v1(location_pk, amount)
 
     def location_guides_v1(self, location_pk: int) -> List[Guide]:

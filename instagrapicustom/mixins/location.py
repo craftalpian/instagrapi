@@ -333,7 +333,7 @@ class LocationMixin:
         return medias, next_max_id
 
     def location_medias_v1(
-        self, location_pk: int, amount: int = 63, tab_key: str = ""
+        self, location_pk: int, amount: int = 63, tab_key: str = "", next_max_id: str = ""
     ) -> List[Media]:
         """
         Get medias for a location by Private Mobile API
@@ -355,11 +355,11 @@ class LocationMixin:
         assert (
             tab_key in tab_keys_v1
         ), f'You must specify one of the options for "tab_key" {tab_keys_a1}'
-        medias, _ = self.location_medias_v1_chunk(location_pk, amount, tab_key)
-        print("ini underscore", _)
+        medias, next_id = self.location_medias_v1_chunk(location_pk, amount, tab_key, next_max_id)
+        print("ini next_id", next_id)
         if amount:
             medias = medias[:amount]
-        return medias
+        return medias, next_id
 
     def location_medias_top_a1(
         self, location_pk: int, amount: int = 9, sleep: float = 0.5
